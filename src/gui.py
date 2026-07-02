@@ -1,6 +1,6 @@
 """
-gui.py - Giao diện chính của N-Queens Solver
-Tích hợp: Board, Solver, Statistics
+gui.py - Main graphical user interface for the N-Queens Solver
+Integrates: Board, Solver, Statistics
 """
 import tkinter as tk
 from tkinter import ttk, messagebox
@@ -12,7 +12,7 @@ from solver import NQueensSolver
 from statistics import Statistics, benchmark
 
 
-# ── Hằng số màu theme ────────────────────────────────────────────────
+# ── Application theme colors ────────────────────────────────────────────────
 BG_MAIN   = "#12121F"
 BG_PANEL  = "#1A1A2E"
 BG_CARD   = "#22223A"
@@ -35,7 +35,7 @@ class App(tk.Tk):
         self.configure(bg=BG_MAIN)
         self.resizable(True, True)
 
-        # Trạng thái
+        # Application state
         self.n_var        = tk.IntVar(value=8)
         self.speed_var    = tk.DoubleVar(value=50)   # ms delay
         self.stats        = Statistics()
@@ -53,7 +53,7 @@ class App(tk.Tk):
     # Build UI
     # ════════════════════════════════════════════════════════════════
     def _build_ui(self):
-        # ── Layout chính ───────────────────────────────────────────
+        # ── Main layout ───────────────────────────────────────────
         self.left_panel = tk.Frame(self, bg=BG_PANEL, padx=16, pady=16)
         self.left_panel.pack(side=tk.LEFT, fill=tk.Y)
 
@@ -71,7 +71,7 @@ class App(tk.Tk):
                  bg=BG_PANEL, fg=ACCENT).pack(pady=(0, 16))
 
         # ── N selector ─────────────────────────────────────────────
-        card = self._card(p, "Kích thước N")
+        card = self._card(p, "Board Size")
         row_n = tk.Frame(card, bg=BG_CARD)
         row_n.pack(fill=tk.X)
         for n in [4, 6, 8, 10, 12]:
@@ -83,7 +83,7 @@ class App(tk.Tk):
 
         spin_frame = tk.Frame(card, bg=BG_CARD)
         spin_frame.pack(fill=tk.X, pady=4)
-        tk.Label(spin_frame, text="Tuỳ chỉnh:", font=FONT_LABEL,
+        tk.Label(spin_frame, text="Custom:", font=FONT_LABEL,
                  bg=BG_CARD, fg=FG_DIM).pack(side=tk.LEFT)
         self.spin_n = tk.Spinbox(spin_frame, from_=4, to=20, width=4,
                                  textvariable=self.n_var,
@@ -96,7 +96,7 @@ class App(tk.Tk):
                   command=self._on_spin_n).pack(side=tk.LEFT)
 
         # ── Buttons ────────────────────────────────────────────────
-        card2 = self._card(p, "Điều khiển")
+        card2 = self._card(p, "Controls")
 
         self.btn_solve = self._btn(card2, "▶  Solve (Animation)",
                                    ACCENT, self._solve_animate)
@@ -119,10 +119,10 @@ class App(tk.Tk):
         self.btn_bench.pack(fill=tk.X, pady=(8, 3))
 
         # ── Speed ──────────────────────────────────────────────────
-        card3 = self._card(p, "Tốc độ Animation")
+        card3 = self._card(p, "Animation Speed")
         speed_row = tk.Frame(card3, bg=BG_CARD)
         speed_row.pack(fill=tk.X)
-        tk.Label(speed_row, text="Chậm", font=FONT_LABEL,
+        tk.Label(speed_row, text="Slow", font=FONT_LABEL,
                  bg=BG_CARD, fg=FG_DIM).pack(side=tk.LEFT)
         self.speed_scale = tk.Scale(speed_row, from_=1, to=200,
                                     orient=tk.HORIZONTAL,
@@ -134,7 +134,7 @@ class App(tk.Tk):
                                     command=lambda v: self._on_speed(v))
         self.speed_scale.set(50)
         self.speed_scale.pack(side=tk.LEFT, padx=4)
-        tk.Label(speed_row, text="Nhanh", font=FONT_LABEL,
+        tk.Label(speed_row, text="Fast", font=FONT_LABEL,
                  bg=BG_CARD, fg=FG_DIM).pack(side=tk.LEFT)
 
         self.lbl_speed = tk.Label(card3, text="Delay: 150ms",
@@ -143,22 +143,22 @@ class App(tk.Tk):
         self._on_speed(50)
 
         # ── Statistics ─────────────────────────────────────────────
-        card4 = self._card(p, "Thống kê")
+        card4 = self._card(p, "Statistics")
         self.lbl_attempts   = self._stat_label(card4, "Attempts",   "0")
         self.lbl_backtracks = self._stat_label(card4, "Backtracks", "0")
         self.lbl_solutions  = self._stat_label(card4, "Solutions",  "0")
         self.lbl_time       = self._stat_label(card4, "Time",       "0.0000s")
 
         # ── Status ─────────────────────────────────────────────────
-        self.lbl_status = tk.Label(p, text="Sẵn sàng.",
+        self.lbl_status = tk.Label(p, text="Ready.",
                                    font=FONT_LABEL, bg=BG_PANEL,
                                    fg=ACCENT2, wraplength=220, justify=tk.LEFT)
         self.lbl_status.pack(pady=(12, 0), anchor="w")
 
     def _build_right_panel(self):
         p = self.right_frame
-        # Tiêu đề bàn cờ
-        self.lbl_board_title = tk.Label(p, text="Bàn cờ 8×8",
+        # Chessboard title
+        self.lbl_board_title = tk.Label(p, text="Chessboard 8×8",
                                          font=FONT_TITLE,
                                          bg=BG_MAIN, fg=FG_TEXT)
         self.lbl_board_title.pack(pady=(0, 8))
@@ -167,15 +167,15 @@ class App(tk.Tk):
         self.board_canvas = BoardCanvas(p, n=8, cell_size=60)
         self.board_canvas.pack()
 
-        # Chú thích màu
+        # Color legend
         legend = tk.Frame(p, bg=BG_MAIN)
         legend.pack(pady=8)
         for color, label in [
-            ("#27AE60", "Đặt hậu"),
-            ("#E74C3C", "Xung đột"),
+            ("#27AE60", "Place Queen"),
+            ("#E74C3C", "Conflict"),
             ("#F39C12", "Backtrack"),
-            ("#3498DB", "Đang thử"),
-            ("#2ECC71", "Nghiệm"),
+            ("#3498DB", "Trying"),
+            ("#2ECC71", "Solution"),
         ]:
             fr = tk.Frame(legend, bg=BG_MAIN)
             fr.pack(side=tk.LEFT, padx=6)
@@ -234,10 +234,10 @@ class App(tk.Tk):
         n = self.n_var.get()
         cs = max(32, min(70, 560 // n))
         self.board_canvas.set_n(n, cs)
-        self.lbl_board_title.config(text=f"Bàn cờ {n}×{n}")
+        self.lbl_board_title.config(text=f"Chessboard {n}×{n}")
 
     def _on_speed(self, v):
-        # Scale 1..200 -> delay 300ms .. 1ms (nghịch đảo)
+        # Convert slider value (1..200) to animation delay (300ms..1ms)
         v = float(v)
         delay = int(301 - v * 1.5)
         delay = max(1, delay)
@@ -249,7 +249,7 @@ class App(tk.Tk):
         return max(1, int(301 - v * 1.5))
 
     def _reset(self):
-        """Dừng animation, xóa bàn cờ, reset stats."""
+        """Stop animation, clear the board, and reset statistics."""
         self._stop_animation()
         self._running = False
         self._step_mode = False
@@ -258,22 +258,22 @@ class App(tk.Tk):
         self.stats.reset()
         self.board_canvas.reset()
         self._update_stats()
-        self._status("Sẵn sàng.")
+        self._status("Ready.")
 
     def _stop_animation(self):
         if self._anim_id:
             self.after_cancel(self._anim_id)
             self._anim_id = None
 
-    # ── Solve Animation ───────────────────────────────────────────
+    # ── Animated Solver ───────────────────────────────────────────
     def _solve_animate(self):
         self._reset()
         n = self.n_var.get()
         self._step_mode = False
         self._running = True
 
-        # Sinh bước trong thread riêng để không block UI
-        self._status("Đang sinh các bước...")
+        # Generate solving steps in a background thread to keep the UI responsive
+        self._status("Generating solving steps...")
         self.btn_solve.config(state=tk.DISABLED)
 
         def generate():
@@ -287,7 +287,7 @@ class App(tk.Tk):
         threading.Thread(target=generate, daemon=True).start()
 
     def _anim_start(self):
-        self._status(f"Đang chạy animation ({len(self.steps)} bước)...")
+        self._status(f"Running animation ({len(self.steps)} steps)...")
         self._anim_tick()
 
     def _anim_tick(self):
@@ -310,15 +310,15 @@ class App(tk.Tk):
         self._running = False
         self.btn_solve.config(state=tk.NORMAL)
         self._status(
-            f"✓ Hoàn thành! Tìm được {self.stats.solutions} nghiệm "
-            f"trong {self.stats.runtime_str()}."
+            f"✓ Completed! Found {self.stats.solutions} nghiệm "
+            f"in {self.stats.runtime_str()}."
         )
         self._update_stats()
 
-    # ── Step by Step ──────────────────────────────────────────────
+    # ── Step-by-Step Execution ──────────────────────────────────────────────
     def _next_step(self):
         if not self.steps:
-            # Sinh bước lần đầu
+            # Generate solving steps for the first execution
             n = self.n_var.get()
             self._step_mode = True
             self._running = False
@@ -327,11 +327,11 @@ class App(tk.Tk):
             self.step_index = 0
             self.stats.reset()
             self.stats.start()
-            self._status(f"Step-by-step ({len(self.steps)} bước). Bấm Next.")
+            self._status(f"Step-by-step ({len(self.steps)} steps). Press Next.")
 
         if self.step_index >= len(self.steps):
             self.stats.stop()
-            self._status(f"✓ Hoàn thành! {self.stats.solutions} nghiệm.")
+            self._status(f"✓ Completed! {self.stats.solutions} nghiệm.")
             self._update_stats()
             return
 
@@ -340,8 +340,8 @@ class App(tk.Tk):
         self._count_step(step)
         self.step_index += 1
         self._status(
-            f"Bước {self.step_index}/{len(self.steps)} | "
-            f"Hàng {step['row']}, Cột {step['col']} | {step['action']}"
+            f"Step {self.step_index}/{len(self.steps)} | "
+            f"Row {step['row']}, Column {step['col']} | {step['action']}"
         )
         self._update_stats()
 
@@ -350,14 +350,14 @@ class App(tk.Tk):
         if self._running:
             self._running = False
             self._stop_animation()
-            self._status("⏸ Đã tạm dừng. Bấm Pause/Resume để tiếp tục.")
+            self._status("⏸ Paused. Press Pause/Resume to continue.")
         else:
             if self.steps and self.step_index < len(self.steps):
                 self._running = True
                 self._anim_tick()
-                self._status("▶ Tiếp tục animation...")
+                self._status("▶ Resuming animation...")
 
-    # ── Apply step lên board ──────────────────────────────────────
+    # ── Apply Step to the Chessboard ──────────────────────────────────────
     def _apply_step(self, step):
         self.board_canvas.show_step(
             step['row'], step['col'], step['action'], step['board']
@@ -373,7 +373,7 @@ class App(tk.Tk):
             self.stats.add_solution()
         self._update_stats()
 
-    # ── Update stats labels ───────────────────────────────────────
+    # ── Refresh Statistics Display ───────────────────────────────────────
     def _update_stats(self):
         self.lbl_attempts.config(text=f"{self.stats.attempts:,}")
         self.lbl_backtracks.config(text=f"{self.stats.backtracks:,}")
@@ -390,14 +390,14 @@ class App(tk.Tk):
         win.configure(bg=BG_MAIN)
         win.geometry("480x340")
 
-        tk.Label(win, text="📊 Benchmark Kết quả",
+        tk.Label(win, text="📊 Benchmark Results",
                  font=("Consolas", 14, "bold"),
                  bg=BG_MAIN, fg=ACCENT).pack(pady=12)
 
         frame = tk.Frame(win, bg=BG_CARD, padx=12, pady=12)
         frame.pack(fill=tk.BOTH, expand=True, padx=16, pady=4)
 
-        lbl_wait = tk.Label(frame, text="Đang chạy benchmark...",
+        lbl_wait = tk.Label(frame, text="Running benchmark...",
                             font=FONT_LABEL, bg=BG_CARD, fg=FG_DIM)
         lbl_wait.pack(pady=20)
 
@@ -407,7 +407,7 @@ class App(tk.Tk):
 
         def _show(results):
             lbl_wait.destroy()
-            # Header
+            # Table Header
             cols = ["N", "Solutions", "Attempts", "Backtracks", "Time"]
             widths = [4, 10, 12, 12, 10]
             header = tk.Frame(frame, bg=BG_CARD)
@@ -417,7 +417,7 @@ class App(tk.Tk):
                          bg=BG_CARD, fg=ACCENT, width=w,
                          anchor="e").pack(side=tk.LEFT)
             tk.Frame(frame, bg="#444466", height=1).pack(fill=tk.X, pady=4)
-            # Rows
+            # Result Rows
             for r in results:
                 row = tk.Frame(frame, bg=BG_CARD)
                 row.pack(fill=tk.X, pady=2)
