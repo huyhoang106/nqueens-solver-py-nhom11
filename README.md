@@ -24,6 +24,6 @@ N-Queens Solver using Backtracking Algorithm.
 
 ## Technologies
 
-- C++
+- Python
 - GitHub
 - Visual Studio Code
