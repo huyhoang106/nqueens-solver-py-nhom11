@@ -27,3 +27,5 @@ N-Queens Solver using Backtracking Algorithm.
 - Python
 - GitHub
 - Visual Studio Code
+## Flowchart
+<img width="753" height="940" alt="image" src="https://github.com/user-attachments/assets/2b2abf59-3e92-4638-90b6-29ebf3e8388e" />
